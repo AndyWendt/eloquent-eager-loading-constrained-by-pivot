@@ -18,8 +18,10 @@ class EagerLoadingConstraintsTest extends TestCase
     {
         // Arrange
         $expectedAuthors = [3 => 'William Strunk', 5 => 'E.B. White', 6 => 'William Strunk J.R.'];
+
         // Act
         $articlesWithAuthors = Article::where('id', 2)->with('authors')->first();
+
         // Assert
         $this->assertCount(count($expectedAuthors), $articlesWithAuthors->authors);
         $articlesWithAuthors->authors->each(function ($author) use ($expectedAuthors) {
@@ -33,8 +35,11 @@ class EagerLoadingConstraintsTest extends TestCase
      */
     public function it_returns_only_authors_with_display_set_to_true_on_the_pivot_when_using_eager_loading_constraints()
     {
+        // Arrange
         $expectedAuthors = [3 => 'William Strunk', 5 => 'E.B. White'];
         $authorsToNotBeReturned = [6 => 'William Strunk J.R.'];
+
+        // Act
         $articlesWithAuthors = Article::where('id', 2)
             ->with([
                 'authors' => function ($query) {
@@ -42,6 +47,7 @@ class EagerLoadingConstraintsTest extends TestCase
                 }
             ])->first();
 
+        // Assert
         $this->assertCount(count($expectedAuthors), $articlesWithAuthors->authors);
         $articlesWithAuthors->authors->each(function ($author) use ($expectedAuthors, $authorsToNotBeReturned) {
             $this->assertContains($author->name, $expectedAuthors);
