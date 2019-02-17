@@ -10,4 +10,9 @@ class Article extends Model
     {
         return $this->belongsToMany(Author::class);
     }
+
+    public function authorsToDisplay()
+    {
+        return $this->belongsToMany(Author::class)->wherePivot('display', true);
+    }
 }

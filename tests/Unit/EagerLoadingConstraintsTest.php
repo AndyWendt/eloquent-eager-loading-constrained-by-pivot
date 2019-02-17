@@ -56,4 +56,26 @@ class EagerLoadingConstraintsTest extends TestCase
             $this->assertArrayNotHasKey($author->id, $authorsToNotBeReturned);
         });
     }
+
+    /**
+     * @test
+     */
+    public function it_returns_only_authors_with_display_set_to_true_using_the_constrained_relationship_method()
+    {
+        // Arrange
+        $expectedAuthors = [3 => 'William Strunk', 5 => 'E.B. White'];
+        $authorsToNotBeReturned = [6 => 'William Strunk J.R.'];
+
+        // Act
+        $articlesWithAuthors = Article::where('id', 2)->with('authorsToDisplay')->first();
+
+        // Assert
+        $this->assertCount(count($expectedAuthors), $articlesWithAuthors->authorsToDisplay);
+        $articlesWithAuthors->authorsToDisplay->each(function ($author) use ($expectedAuthors, $authorsToNotBeReturned) {
+            $this->assertContains($author->name, $expectedAuthors);
+            $this->assertArrayHasKey($author->id, $expectedAuthors);
+            $this->assertNotContains($author->name, $authorsToNotBeReturned);
+            $this->assertArrayNotHasKey($author->id, $authorsToNotBeReturned);
+        });
+    }
 }
